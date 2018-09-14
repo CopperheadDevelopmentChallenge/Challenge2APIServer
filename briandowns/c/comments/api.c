@@ -46,7 +46,7 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
     json_object_set_new(json_body, "email", json_string(email));
     json_object_set_new(json_body, "body", json_string(body));
     //json_object_set_new(json_body, "relationships", json_array_set(NULL, 0, NULL));
-    ulfius_set_json_body_response(response, 200, json_body);
+    ulfius_set_json_body_response(response, HTTP_STATUS_OK, json_body);
     json_decref(json_body);
     
     char lm[100];
