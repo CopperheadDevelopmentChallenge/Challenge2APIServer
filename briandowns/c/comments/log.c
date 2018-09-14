@@ -1,7 +1,16 @@
 #include <json-c/json.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
+#include <string.h> 
 #include <time.h>
+
+#include "log.h"
+
+log_t *log_new(enum logger_format lf) {
+    log_t *lt = malloc(sizeof(log_t));
+    lt->log_format = lf;
+    return lt;
+}
 
 void log_json(const char* tag, char* message) {
     struct json_object *json_log;
@@ -11,21 +20,7 @@ void log_json(const char* tag, char* message) {
     time_t now = time(NULL);
     strftime(t_buff, 24, "%Y-%m-%d %H:%M:%S ", localtime(&now));
     json_object_object_add(json_log, "timestamp", json_object_new_string(t_buff));
-
-    for (char *p = strtok(message, "\r\n"); p != NULL; p = strtok(NULL, "\r\n")) {
-        if (strstr(p, "HTTP/1") != NULL) {
-            json_object_object_add(json_log, "method_uri", json_object_new_string(p));
-        }
-
-        if (strstr(p, "Host") != NULL) {
-            json_object_object_add(json_log, "host", json_object_new_string(p));
-        }
-
-        if (strstr(p, "User") != NULL) {
-            json_object_object_add(json_log, "user_agent", json_object_new_string(p));
-        }
-    }
-
+    json_object_object_add(json_log, tag, json_object_new_string(message));
     printf("%s\n", json_object_to_json_string(json_log));
 }
 

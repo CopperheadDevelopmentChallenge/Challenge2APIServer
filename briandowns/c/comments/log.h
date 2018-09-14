@@ -10,14 +10,25 @@ enum logger_format {
 };
 
 /**
- * log_json receives a key and a value. The value is the HTTP request header which
- * which is then broken up into relevant pieces and added to the JSON log.
+ * log_t
+ */
+typedef struct {
+    enum logger_format log_format;
+} log_t;
+
+
+/**
+ * log_new creates a new pointer to a log_t structure
+ */
+log_t *log_new(enum logger_format lf);
+
+/**
+ * log_json receives a key and a value
  */
 void log_json(const char* tag, char* message);
 
 /*
- * log_standard receives a key and value. The value is the HTTP request header which
- * is then broken up into relevant pieces and added to the log buffer.
+ * log_standard receives a key and value
  */
 void log_standard(const char* tag, char* message);
 
