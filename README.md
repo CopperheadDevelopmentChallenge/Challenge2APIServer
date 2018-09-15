@@ -143,7 +143,7 @@ Upon start the service will load the json file and store it in memory. then be a
   - https://github.com/wg/wrk
   - I will setup and put any scripts in this repo
   - I will try to make it out put to a file that can be posted in this repo
-- I will setup 2 digital ocean droplets
+- I will setup 2 digital ocean unspecified Linux droplets
   - first will host the server. This will run one service at a time
   - second will be for the client. This will host the wrk tool and a script to run it
 
