@@ -1,6 +1,6 @@
 # Challenge 2 API Server
 
-## Deadline: 1537401599 MST
+## Deadline: 1537574399 MST
 
 ## The Challenge
 
