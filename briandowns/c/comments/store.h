@@ -23,7 +23,7 @@ entry_t *store_new_entry();
  * store_free_entry frees the memory used by the 
  * entry object.
  */
-void store_free_entry(entry_t entry);
+void store_free_entry(entry_t *entry);
 
 /**
  * store_t
