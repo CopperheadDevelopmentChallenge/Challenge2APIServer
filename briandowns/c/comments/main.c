@@ -10,6 +10,7 @@
 
 #include "api.h"
 #include "log.h"
+#include "store.h"
 
 #define STR1(x) #x
 #define STR(x) STR1(x)
@@ -54,6 +55,11 @@ int main(int argc, char **argv) {
             fprintf(stderr, usage, argv[0]);
             exit(EXIT_FAILURE);
         }
+    }
+
+    store = store_new("data.json");
+    if (store == NULL)  {
+        return EXIT_FAILURE;
     }
 
     struct _u_instance instance;

@@ -8,6 +8,7 @@
 
 #include "api.h"
 #include "log.h"
+#include "store.h"
 
 #define U_DISABLE_WEBSOCKET
 
@@ -23,7 +24,12 @@
 #define HTTP_STATUS_CREATED  201
 #define HTTP_STATUS_ACCEPTED 202
 
-int time_spent(clock_t start) {                     
+/**
+ * time_spent takes the start time of a route handler
+ * and calculates how long it ran for. It then returns 
+ * that value to be logged.
+ */
+static int time_spent(clock_t start) {                     
     clock_t diff = clock() - start;              
     int msec = diff * 1000 / CLOCKS_PER_SEC; 
     return msec % 1000;
@@ -35,10 +41,14 @@ int time_spent(clock_t start) {
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
 
-    char *id = "id";
+    long long int id = 0;
     char *name = "name";
     char *email = "email"; 
     char *body = "body";
+
+    printf("before the store call\n");
+    char **data = store_get_by_id(store);
+    printf("after the store call\n");
 
     json_t *json_body = json_object();
     json_object_set_new(json_body, "id", json_integer(id)); 
