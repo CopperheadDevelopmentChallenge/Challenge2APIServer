@@ -12,7 +12,7 @@
 
 #define U_DISABLE_WEBSOCKET
 
-#define COMMENTS_PATH "/comments"
+#define COMMENTS_PATH       "/comments"
 #define COMMENTS_BY_ID_PATH "/comments/:id"
 
 #define HTTP_METHOD_GET    "GET"
@@ -41,7 +41,12 @@ static int time_spent(clock_t start) {
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
 
-    store_get_by_id(store, 1);
+    entry_t entry = store_get_by_id(store, 1);
+    if (entry == NULL) {
+        char lm[100];
+        sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
+        log_json("info", lm);
+    }
 
     long long int id = 0;
     char *name = "name";
@@ -56,6 +61,7 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
     //json_object_set_new(json_body, "relationships", json_array_set(NULL, 0, NULL));
     ulfius_set_json_body_response(response, HTTP_STATUS_OK, json_body);
     json_decref(json_body);
+    store_free_entry(entry);
     
     char lm[100];
     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
