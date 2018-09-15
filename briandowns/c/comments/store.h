@@ -14,6 +14,13 @@ typedef struct {
 
 store_t *store;
 
+typedef struct {
+    int id;
+    char *name;
+    char *email;
+    char *body;
+} entry_t;
+
 /**
  * store_new
  */
@@ -27,7 +34,7 @@ void store_free(store_t *store);
 /**
  * store_get_by_id
  */
-json_object *store_get_by_id(const store_t *store, const int id);
+json_object *store_get_by_id(const store_t *store, int id);
 
 /**
  * store_get_by_name

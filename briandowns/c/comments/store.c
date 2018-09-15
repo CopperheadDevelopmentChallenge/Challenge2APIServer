@@ -20,7 +20,7 @@ void store_free(store_t *store) {
     free(store);
 }
 
-json_object *store_get_by_id(const store_t *store, const int id) {
+json_object *store_get_by_id(const store_t *store, int id) {
     struct json_object *data_obj,  *json_obj_id, *json_obj_name, *json_obj_email, *json_obj_body;
     for (int i = 0; i < store->size; i++) {
         // get the i-th object in medi_array
