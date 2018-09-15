@@ -41,14 +41,12 @@ static int time_spent(clock_t start) {
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
 
+    store_get_by_id(store, 1);
+
     long long int id = 0;
     char *name = "name";
     char *email = "email"; 
     char *body = "body";
-
-    printf("before the store call\n");
-    char **data = store_get_by_id(store);
-    printf("after the store call\n");
 
     json_t *json_body = json_object();
     json_object_set_new(json_body, "id", json_integer(id)); 
