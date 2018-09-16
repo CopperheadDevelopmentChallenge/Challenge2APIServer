@@ -7,6 +7,7 @@ echo "Installing Dependencies..."
 sudo yum install -y \
     git \
     gcc cmake \
+    gnutls-devel \
     json-c json-c-devel \
     jansson jansson-devel \
     libmicrohttpd-devel \
