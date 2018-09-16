@@ -12,3 +12,7 @@ $(BINDIR)/$(BINARY): clean
 .PHONY: clean
 clean:
 	rm -f $(BINDIR)/$(BINARY)
+
+.PHONY: deps
+deps:
+	deps.sh 
