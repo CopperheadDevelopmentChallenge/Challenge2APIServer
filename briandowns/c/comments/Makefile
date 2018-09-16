@@ -15,4 +15,4 @@ clean:
 
 .PHONY: deps
 deps:
-	deps.sh 
+	./deps.sh 
