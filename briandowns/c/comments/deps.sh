@@ -12,7 +12,9 @@ sudo yum install -y \
     jansson jansson-devel \
     libmicrohttpd-devel \
     libcurl-devel \
-    systemd-devel
+    systemd-devel \
+    centos-release-scl \
+    llvm-toolset-7
 
 sudo ldconfig
 
