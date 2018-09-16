@@ -20,7 +20,7 @@ git clone git@github.com:babelouest/ulfius.git
 
 cd ulfius
 
-mkdir build
+mkdir -p build
 cd build
 cmake .. 
 make && sudo make install
