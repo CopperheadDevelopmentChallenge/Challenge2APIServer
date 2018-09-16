@@ -38,18 +38,6 @@ static int time_spent(clock_t start) {
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
 
-<<<<<<< HEAD
-    long long int id = 0;
-    char *name = "name";
-    char *email = "email"; 
-    char *body = "body";
-
-    json_t *json_body = json_object();
-    json_object_set_new(json_body, "id", json_integer(id)); 
-    json_object_set_new(json_body, "name", json_string(name));
-    json_object_set_new(json_body, "email", json_string(email));
-    json_object_set_new(json_body, "body", json_string(body));
-=======
     entry_t *entry = store_get_by_id(store, 1);
     if (entry == NULL) {
         char lm[100];
@@ -64,7 +52,7 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
     json_object_set_new(json_body, "name", json_string(entry->name));
     json_object_set_new(json_body, "email", json_string(entry->email));
     json_object_set_new(json_body, "body", json_string(entry->body));
->>>>>>> e8c82183ca7d8730818ed652dc2d4bb434a902a1
+
     //json_object_set_new(json_body, "relationships", json_array_set(NULL, 0, NULL));
     ulfius_set_json_body_response(response, HTTP_STATUS_OK, json_body);
     json_decref(json_body);
