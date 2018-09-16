@@ -1,10 +1,12 @@
 #!/bin/sh
 
+set -e 
+
 echo "Installing Dependencies..."
 
 sudo yum install -y \
     git \
-    gcc cmake
+    gcc cmake \
     json-c json-c-devel \
     jansson jansson-devel \
     libmicrohttpd-devel \
