@@ -11,6 +11,7 @@ sudo yum install -y \
     jansson jansson-devel \
     libmicrohttpd-devel \
     libcurl-devel \
+    systemd-devel
 
 sudo ldconfig
 
@@ -18,11 +19,23 @@ cd ~
 
 git clone git@github.com:babelouest/ulfius.git
 
+echo "/usr/local/lib" >> /etc/ld.so.conf
+sudo ldconfig -v
+
+if [ -d ulfius ]; then
+    rm -rf ulfius
+fi
+
 cd ulfius
 
-mkdir -p build
-cd build
-cmake .. 
+git submodule update --init
+
+cd lib/orcania
 make && sudo make install
+cd ../yder
+make && sudo make install
+cd ../..
+make
+sudo make install
 
 exit 0
