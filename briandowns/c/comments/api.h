@@ -5,4 +5,4 @@
 
 int api_add_routes(struct _u_instance *instance);
 
-#endif
+#endif /* _API_H */

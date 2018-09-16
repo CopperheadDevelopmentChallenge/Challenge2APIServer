@@ -7,6 +7,7 @@
 #include <jansson.h>
 
 #include "api.h"
+#include "http.h"
 #include "log.h"
 #include "store.h"
 
@@ -15,14 +16,10 @@
 #define COMMENTS_PATH       "/comments"
 #define COMMENTS_BY_ID_PATH "/comments/:id"
 
-#define HTTP_METHOD_GET    "GET"
-#define HTTP_METHOD_POST   "POST"
-#define HTTP_METHOD_PUT    "PUT"
-#define HTTP_METHOD_DELETE "DELETE"
-
-#define HTTP_STATUS_OK       200
-#define HTTP_STATUS_CREATED  201
-#define HTTP_STATUS_ACCEPTED 202
+#define JSON_FIELD_ID    "id"
+#define JSON_FIELD_NAME  "name"
+#define JSON_FIELD_EMAIL "email"
+#define JSON_FIELD_BODY  "body"
 
 /**
  * time_spent takes the start time of a route handler
@@ -40,13 +37,6 @@ static int time_spent(clock_t start) {
  */
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
-
-    entry_t entry = store_get_by_id(store, 1);
-    if (entry == NULL) {
-        char lm[100];
-        sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
-        log_json("info", lm);
-    }
 
     long long int id = 0;
     char *name = "name";
@@ -70,28 +60,33 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
 }
 
 /**
- * callback_get_all_comments_with_params
+ * callback_get_comments_by_id
  */
-// static int callback_get_all_comments_with_params(const struct _u_request *request, struct _u_response *response, void *user_data) {
-//     json_t *json_lookup_request = ulfius_get_json_body_request(request, NULL);
+static int callback_get_comments_by_id(const struct _u_request *request, struct _u_response *response, void *user_data) {
+    json_t *json_lookup_request = ulfius_get_json_body_request(request, NULL);
 
-//     char *id = "";
-//     const char *name = json_string_value(json_object_get(json_lookup_request, "name"));
-//     const char *email = json_string_value(json_object_get(json_lookup_request, "email"));
-//     const char *body = json_string_value(json_object_get(json_lookup_request, "body"));
+    char *param_id = request->map_url
+    printf("ID: %s\n", param_id);
 
-//     json_t *json_body = json_object();
-//     json_object_set_new(json_body, "id", json_integer(id)); 
-//     json_object_set_new(json_body, "name", json_string(name));
-//     json_object_set_new(json_body, "email", json_string(email));
-//     json_object_set_new(json_body, "body", json_string(body));
-//     //json_object_set_new(json_body, "relationships", json_array_set(NULL, 0, NULL));
-//     ulfius_set_json_body_response(response, 200, json_body);
-//     json_decref(json_lookup_request);
-//     json_decref(json_body);
-//     return U_CALLBACK_CONTINUE;
-// }
+    // entry_t entry = store_get_by_id(store, 1);
+    // if (entry == NULL) {
+    //     char lm[100];
+    //     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
+    //     log_json("info", lm);
+    // }
+
+    // json_t *json_body = json_object();
+    // json_object_set_new(json_body, "id", json_integer(entry->id)); 
+    // json_object_set_new(json_body, "name", json_string(entry->name));
+    // json_object_set_new(json_body, "email", json_string(entry->email));
+    // json_object_set_new(json_body, "body", json_string(entry->body));
+    // ulfius_set_json_body_response(response, 200, json_body);
+    // json_decref(json_lookup_request);
+    // json_decref(json_body);
+    return U_CALLBACK_CONTINUE;
+}
 
 int api_add_routes(struct _u_instance *instance) {
-    ulfius_add_endpoint_by_val(instance, HTTP_METHOD_GET, COMMENTS_PATH, NULL, 1, &callback_get_all_comments, NULL);
+    ulfius_add_endpoint_by_val(instance, HTTP_METHOD_GET, COMMENTS_PATH, NULL, 0, &callback_get_all_comments, NULL);
+    ulfius_add_endpoint_by_val(instance, HTTP_METHOD_GET, COMMENTS_BY_ID_PATH, NULL, 0, &callback_get_comments_by_id, NULL);
 }

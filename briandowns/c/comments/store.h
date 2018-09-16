@@ -60,4 +60,4 @@ char **store_get_by_name(const store_t *store, const char *name);
  */
 char **store_get_by_email(const store_t *store, const char *name);
 
-#endif
+#endif /* _STORE_H */

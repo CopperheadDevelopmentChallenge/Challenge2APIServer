@@ -38,4 +38,4 @@ void log_standard(const char* tag, char* message);
  */
 void log_to_stdout(int lf, const char* tag, char* message);
 
-#endif
+#endif  /* _LOG_H */
