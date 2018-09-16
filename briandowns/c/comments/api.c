@@ -67,29 +67,29 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
 /**
  * callback_get_comments_by_id
  */
-static int callback_get_comments_by_id(const struct _u_request *request, struct _u_response *response, void *user_data) {
-    json_t *json_lookup_request = ulfius_get_json_body_request(request, NULL);
+// static int callback_get_comments_by_id(const struct _u_request *request, struct _u_response *response, void *user_data) {
+//     json_t *json_lookup_request = ulfius_get_json_body_request(request, NULL);
 
-    char *param_id = request->map_url
-    printf("ID: %s\n", param_id);
+//     char *param_id = request->map_url
+//     printf("ID: %s\n", param_id);
 
-    // entry_t entry = store_get_by_id(store, 1);
-    // if (entry == NULL) {
-    //     char lm[100];
-    //     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
-    //     log_json("info", lm);
-    // }
+//     // entry_t entry = store_get_by_id(store, 1);
+//     // if (entry == NULL) {
+//     //     char lm[100];
+//     //     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
+//     //     log_json("info", lm);
+//     // }
 
-    // json_t *json_body = json_object();
-    // json_object_set_new(json_body, "id", json_integer(entry->id)); 
-    // json_object_set_new(json_body, "name", json_string(entry->name));
-    // json_object_set_new(json_body, "email", json_string(entry->email));
-    // json_object_set_new(json_body, "body", json_string(entry->body));
-    // ulfius_set_json_body_response(response, 200, json_body);
-    // json_decref(json_lookup_request);
-    // json_decref(json_body);
-    return U_CALLBACK_CONTINUE;
-}
+//     // json_t *json_body = json_object();
+//     // json_object_set_new(json_body, "id", json_integer(entry->id)); 
+//     // json_object_set_new(json_body, "name", json_string(entry->name));
+//     // json_object_set_new(json_body, "email", json_string(entry->email));
+//     // json_object_set_new(json_body, "body", json_string(entry->body));
+//     // ulfius_set_json_body_response(response, 200, json_body);
+//     // json_decref(json_lookup_request);
+//     // json_decref(json_body);
+//     return U_CALLBACK_CONTINUE;
+// }
 
 int api_add_routes(struct _u_instance *instance) {
     ulfius_add_endpoint_by_val(instance, HTTP_METHOD_GET, COMMENTS_PATH, NULL, 0, &callback_get_all_comments, NULL);
