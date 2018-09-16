@@ -17,7 +17,7 @@ sudo ldconfig
 
 cd ~
 
-echo "/usr/local/lib" >> /etc/ld.so.conf
+sudo echo "/usr/local/lib" >> /etc/ld.so.conf
 sudo ldconfig -v
 
 if [ -d ulfius ]; then
