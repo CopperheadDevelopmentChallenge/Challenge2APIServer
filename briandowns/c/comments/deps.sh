@@ -17,14 +17,14 @@ sudo ldconfig
 
 cd ~
 
-git clone git@github.com:babelouest/ulfius.git
-
 echo "/usr/local/lib" >> /etc/ld.so.conf
 sudo ldconfig -v
 
 if [ -d ulfius ]; then
     rm -rf ulfius
 fi
+
+git clone git@github.com:babelouest/ulfius.git
 
 cd ulfius
 
