@@ -1,3 +1,7 @@
+// Copyright 2018 Brian J. Downs. All rights reserved.
+// Use of this source code is governed by an BSD-style
+// license that can be found in the LICENSE file.
+
 #ifndef _LOG_H
 #define _LOG_H
 
