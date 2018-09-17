@@ -3,7 +3,7 @@ CC ?= gcc
 VERSION := 0.1.0
 BINDIR := bin
 BINARY := comments
-CFLAGS := -std=c99 -lulfius -ljansson -lyder -lorcania -ljson-c
+CFLAGS := -lulfius -ljansson -lyder -lorcania -ljson-c
 
 $(BINDIR)/$(BINARY): clean
 	if [ ! -d $(BINDIR) ]; then mkdir $(BINDIR); fi
