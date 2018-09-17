@@ -73,21 +73,22 @@ static int callback_get_comments_by_id(const struct _u_request *request, struct 
 
     printf("ID: %s\n", request->map_url);
 
-    // entry_t entry = store_get_by_id(store, 1);
-    // if (entry == NULL) {
-    //     char lm[100];
-    //     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
-    //     log_json("info", lm);
-    // }
+    entry_t entry = store_get_by_id(store, 1);
+    if (entry == NULL) {
+        char lm[100];
+        sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
+        log_json("info", lm);
+    }
 
-    // json_t *json_body = json_object();
-    // json_object_set_new(json_body, "id", json_integer(entry->id)); 
-    // json_object_set_new(json_body, "name", json_string(entry->name));
-    // json_object_set_new(json_body, "email", json_string(entry->email));
-    // json_object_set_new(json_body, "body", json_string(entry->body));
-    // ulfius_set_json_body_response(response, 200, json_body);
-    // json_decref(json_lookup_request);
-    // json_decref(json_body);
+    json_t *json_body = json_object();
+    json_object_set_new(json_body, "id", json_integer(entry->id)); 
+    json_object_set_new(json_body, "name", json_string(entry->name));
+    json_object_set_new(json_body, "email", json_string(entry->email));
+    json_object_set_new(json_body, "body", json_string(entry->body));
+    ulfius_set_json_body_response(response, 200, json_body);
+    json_decref(json_lookup_request);
+    json_decref(json_body);
+    store_free_entry(entry);
     return U_CALLBACK_CONTINUE;
 }
 
