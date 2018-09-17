@@ -71,8 +71,7 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
 static int callback_get_comments_by_id(const struct _u_request *request, struct _u_response *response, void *user_data) {
     json_t *json_lookup_request = ulfius_get_json_body_request(request, NULL);
 
-    char *param_id = request->map_url;
-    printf("ID: %s\n", param_id);
+    printf("ID: %s\n", request->map_url);
 
     // entry_t entry = store_get_by_id(store, 1);
     // if (entry == NULL) {

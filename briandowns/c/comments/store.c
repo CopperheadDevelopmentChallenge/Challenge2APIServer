@@ -27,29 +27,29 @@ void store_free(store_t *store) {
     free(store); 
 }
 
-// entry_t *store_get_by_id(const store_t *store, int id) {
-//     struct json_object *data_obj, *json_obj_id, *json_obj_name, *json_obj_email, *json_obj_body;
+entry_t *store_get_by_id(const store_t *store, int id) {
+    // struct json_object *data_obj, *json_obj_id, *json_obj_name, *json_obj_email, *json_obj_body;
 
-//     for (int i = 0; i < store->size; i++) {
-//         data_obj = json_object_array_get_idx(store->data, i);
-//         json_obj_id = json_object_object_get(data_obj, "id");
+    // for (int i = 0; i < store->size; i++) {
+    //     data_obj = json_object_array_get_idx(store->data, i);
+    //     json_obj_id = json_object_object_get(data_obj, "id");
 
-//         if (json_object_get_int(json_obj_id) == id) {
-//             json_obj_name = json_object_object_get(data_obj, "name");
-//             json_obj_email = json_object_object_get(data_obj, "email");
-//             json_obj_body = json_object_object_get(data_obj, "body");
+    //     if (json_object_get_int(json_obj_id) == id) {
+    //         json_obj_name = json_object_object_get(data_obj, "name");
+    //         json_obj_email = json_object_object_get(data_obj, "email");
+    //         json_obj_body = json_object_object_get(data_obj, "body");
 
-//             entry_t *entry = store_new_entry();
-//             entry->id = json_object_get_int(json_obj_id);
-//             entry->name = json_object_get_string(json_obj_name);
-//             entry->email = json_object_get_string(json_obj_email);
-//             entry->body = json_object_get_string(json_obj_body);
+    //         entry_t *entry = store_new_entry();
+    //         entry->id = json_object_get_int(json_obj_id);
+    //         entry->name = json_object_get_string(json_obj_name);
+    //         entry->email = json_object_get_string(json_obj_email);
+    //         entry->body = json_object_get_string(json_obj_body);
 
-//             return entry;
-//         }
-//     }
-//     return NULL;
-// }
+    //         return entry;
+    //     }
+    // }
+    return NULL;
+}
 
 char **store_get_by_name(const store_t *store, const char *name) {
     return NULL;
