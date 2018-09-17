@@ -10,8 +10,11 @@
 
 entry_t *store_new_entry() {
     entry_t *entry = malloc(sizeof(entry_t));
-
     return entry;
+}
+
+void store_free_entry(entry_t *entry) {
+    free(entry);
 }
 
 void *store_new(const char *filename) {
