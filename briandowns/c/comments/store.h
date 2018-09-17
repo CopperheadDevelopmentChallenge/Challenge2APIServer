@@ -1,7 +1,6 @@
 #ifndef _STORE_H
 #define _STORE_H
 
-#include <json-c/json.h>
 #include <stdlib.h>
 
 /**
