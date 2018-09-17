@@ -46,8 +46,9 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
         return 1;
     }
 
-    json_t *json_array = json_array();
-    json_array_append(json_array);
+    // json_t *json_array = json_array();
+    // json_array_append(json_array);
+    json_object json_body = json_body();
     json_object_set_new(json_body, "id", json_integer(entry->id)); 
     json_object_set_new(json_body, "name", json_string(entry->name));
     json_object_set_new(json_body, "email", json_string(entry->email));
