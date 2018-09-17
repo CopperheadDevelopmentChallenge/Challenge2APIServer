@@ -8,9 +8,9 @@
  */
 typedef struct {
     int id;
-    char *name;
-    char *email;
-    char *body;
+    const char *name;
+    const char *email;
+    const char *body;
 } entry_t;
 
 /**

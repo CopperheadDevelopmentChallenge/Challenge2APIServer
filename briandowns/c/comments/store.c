@@ -29,11 +29,11 @@ void store_free(store_t *store) {
 
 entry_t *store_get_by_id(const store_t *store, int id) {
     struct json_object *data_obj, *json_obj_id, *json_obj_name, *json_obj_email, *json_obj_body;
+    
     for (int i = 0; i < store->size; i++) {
-        // get the i-th object in medi_array
         data_obj = json_object_array_get_idx(store->data, i);
-        // get the name attribute in the i-th object
         json_obj_id = json_object_object_get(data_obj, "id");
+
         if (json_object_get_int(json_obj_id) == id) {
             json_obj_name = json_object_object_get(data_obj, "name");
             json_obj_email = json_object_object_get(data_obj, "email");
