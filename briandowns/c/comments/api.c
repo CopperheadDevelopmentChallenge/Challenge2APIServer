@@ -73,11 +73,13 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
  * callback_get_comments_by_id
  */
 static int callback_get_comments_by_id(const struct _u_request *request, struct _u_response *response, void *user_data) {
+    clock_t start = clock();
+
     json_t *json_lookup_request = ulfius_get_json_body_request(request, NULL);
 
-    printf("ID: %s\n", request->map_url);
+    //printf("ID: %s\n", request->map_url);
 
-    entry_t entry = store_get_by_id(store, 1);
+    entry_t *entry = store_get_by_id(store, 1);
     if (entry == NULL) {
         char lm[100];
         sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
