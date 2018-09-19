@@ -49,6 +49,11 @@ void *store_new();
 void store_free(store_t *store);
 
 /**
+ * store_get_all retrieves all entries in the data base
+ */
+entry_t *store_get_all(const store_t *store);
+
+/**
  * store_get_by_id retrieves the record for the given id. The 
  * returned entry_t pointer will need to be freed by the caller.
  */

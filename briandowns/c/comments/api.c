@@ -42,26 +42,26 @@ static int time_spent(clock_t start) {
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
 
-    entry_t *entry = store_get_by_id(store, 1);
-    if (entry == NULL) {
+    entry_t *entries = store_get_all(store);
+    if (entries == NULL) {
         char lm[100];
-        sprintf(lm, "no entries found for completed %s request in %dms", COMMENTS_PATH, time_spent(start));
-        log_json("info", lm);
+        sprintf(lm, "failed to retrieve all entries in %s request in %dms", COMMENTS_PATH, time_spent(start));
+        log_json("error", lm);
         return 1;
     }
-
+    printf("entry count : %ld\n", sizeof(entries));
     // json_t *json_array = json_array();
     // json_array_append(json_array);
     json_t *json_body;
-    json_object_set_new(json_body, "id", json_integer(entry->id)); 
-    json_object_set_new(json_body, "name", json_string(entry->name));
-    json_object_set_new(json_body, "email", json_string(entry->email));
-    json_object_set_new(json_body, "body", json_string(entry->body));
+    //json_object_set_new(json_body, "id", json_integer(entry->id)); 
+    //json_object_set_new(json_body, "name", json_string(entry->name));
+    //json_object_set_new(json_body, "email", json_string(entry->email));
+    //json_object_set_new(json_body, "body", json_string(entry->body));
 
     //json_object_set_new(json_body, "relationships", json_array_set(NULL, 0, NULL));
     ulfius_set_json_body_response(response, HTTP_STATUS_OK, json_body);
-    json_decref(json_body);
-    store_free_entry(entry);
+    //json_decref(json_body);
+    //store_free_entry(entry);
     
     char lm[100];
     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
