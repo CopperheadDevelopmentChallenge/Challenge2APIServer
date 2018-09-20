@@ -1,6 +1,6 @@
 # Challenge 2 API Server
 
-## Deadline: 1537513199 MST
+## Deadline: 2018-09-28 23:59:59 MST
 
 ## The Challenge
 
