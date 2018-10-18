@@ -42,26 +42,28 @@ static int time_spent(clock_t start) {
 static int callback_get_all_comments(const struct _u_request *request, struct _u_response *response, void *user_data) {
     clock_t start = clock();
 
-    entry_t *entries = store_get_all(store);
+    entry_t **entries = store_get_all(store);
     if (entries == NULL) {
         char lm[100];
         sprintf(lm, "failed to retrieve all entries in %s request in %dms", COMMENTS_PATH, time_spent(start));
         log_json("error", lm);
         return 1;
-    }
-    printf("entry count : %ld\n", sizeof(entries));
-    // json_t *json_array = json_array();
-    // json_array_append(json_array);
-    json_t *json_body;
-    //json_object_set_new(json_body, "id", json_integer(entry->id)); 
-    //json_object_set_new(json_body, "name", json_string(entry->name));
-    //json_object_set_new(json_body, "email", json_string(entry->email));
-    //json_object_set_new(json_body, "body", json_string(entry->body));
+    } 
 
-    //json_object_set_new(json_body, "relationships", json_array_set(NULL, 0, NULL));
+    json_t *array = json_array();
+    for (int i = 0; i < store->size; i++) {
+        json_t *o = json_pack("{s:i, s:s, s:s, s:s}", "id", 
+            entries[i]->id, "name", 
+            entries[i]->name, "email", 
+            entries[i]->email, "body", 
+            entries[i]->body);
+        json_array_append_new(array, o);
+    }
+    json_t *json_body = json_pack("{s:o}", "data", array);
     ulfius_set_json_body_response(response, HTTP_STATUS_OK, json_body);
-    //json_decref(json_body);
-    //store_free_entry(entry);
+    json_decref(json_body);
+    json_decref(array);
+    store_free_entries(entries);
     
     char lm[100];
     sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));

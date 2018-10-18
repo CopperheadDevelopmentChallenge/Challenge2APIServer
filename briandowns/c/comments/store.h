@@ -29,6 +29,12 @@ entry_t *store_new_entry();
 void store_free_entry(entry_t *entry);
 
 /**
+ * store_free_entries frees the memory used by the 
+ * given array of entry objects
+ */
+void store_free_entries(entry_t **entries);
+
+/**
  * store_t
  */
 typedef struct {
@@ -51,7 +57,7 @@ void store_free(store_t *store);
 /**
  * store_get_all retrieves all entries in the data base
  */
-entry_t *store_get_all(const store_t *store);
+entry_t **store_get_all(const store_t *store);
 
 /**
  * store_get_by_id retrieves the record for the given id. The 

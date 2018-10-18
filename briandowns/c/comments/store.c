@@ -21,6 +21,13 @@ void store_free_entry(entry_t *entry) {
     free(entry);
 }
 
+void store_free_entries(entry_t **entries) {
+    for (int i = 0; i < store->size; i++) {
+        if (entries[i])
+            store_free_entry(entries[i]);
+    }
+}
+
 void *store_new(const char *filename) {
     store_t *store = malloc(sizeof(store_t));
     struct json_object *data = json_object_from_file(filename);
@@ -34,10 +41,10 @@ void store_free(store_t *store) {
     free(store); 
 }
 
-entry_t *store_get_all(const store_t *store) {
+entry_t **store_get_all(const store_t *store) {
     struct json_object *data_obj, *json_obj_id, *json_obj_name, *json_obj_email, *json_obj_body;
 
-    entry_t *entries = malloc(sizeof(entry_t*) * store->size);
+    entry_t **entries = malloc(sizeof(entry_t*) * store->size);
     for (int i = 0; i < store->size; i++) {
         data_obj = json_object_array_get_idx(store->data, i);
         json_obj_id = json_object_object_get(data_obj, "id");
@@ -50,8 +57,7 @@ entry_t *store_get_all(const store_t *store) {
         entry->name = json_object_get_string(json_obj_name);
         entry->email = json_object_get_string(json_obj_email);
         entry->body = json_object_get_string(json_obj_body);
-
-        entries[i] = *entry;
+        entries[i] = entry;
     }
 
     return entries;

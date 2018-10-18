@@ -4,17 +4,17 @@ set -e
 
 echo "Installing Dependencies..."
 
-sudo yum install -y \
-    git \
-    gcc cmake \
-    gnutls-devel \
-    json-c json-c-devel \
-    jansson jansson-devel \
-    libmicrohttpd-devel \
-    libcurl-devel \
-    systemd-devel \
-    centos-release-scl \
-    llvm-toolset-7
+# sudo yum install -y \
+#     git \
+#     gcc cmake \
+#     gnutls-devel \
+#     json-c json-c-devel \
+#     jansson jansson-devel \
+#     libmicrohttpd-devel \
+#     libcurl-devel \
+#     systemd-devel \
+#     centos-release-scl \
+#     llvm-toolset-7
 
 sudo ldconfig
 

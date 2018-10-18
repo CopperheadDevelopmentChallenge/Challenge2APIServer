@@ -61,6 +61,8 @@ int main(int argc, char **argv) {
         }
     }
 
+    log_json("info", "initializing API and data store");
+    
     store = store_new("data.json");
     if (store == NULL)  {
         return EXIT_FAILURE;
