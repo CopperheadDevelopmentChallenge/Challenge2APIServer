@@ -76,9 +76,14 @@ char **store_get_by_name(const store_t *store, const char *name);
 char **store_get_by_email(const store_t *store, const char *name);
 
 /**
+ * store_delete_entry receives a new entry and deletes it
+ */
+void store_delete_entry(store_t *store, const int id);
+
+/**
  * store_update_entry receives a new entry and updates the 
  * existing entry with the new one
  */
-void store_update_entry(store_t *store, const int id);
+void store_update_entry(store_t *store, const entry_t *old, const entry_t *new);
 
 #endif /* _STORE_H */
