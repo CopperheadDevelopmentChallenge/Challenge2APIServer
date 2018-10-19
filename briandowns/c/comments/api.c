@@ -66,7 +66,7 @@ static int callback_get_all_comments(const struct _u_request *request, struct _u
     store_free_entries(entries);
     
     char lm[100];
-    sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
+    sprintf(lm, "completed GET %s request in %dms", COMMENTS_PATH, time_spent(start));
     log_json("info", lm);
     return U_CALLBACK_CONTINUE;
 }
@@ -87,15 +87,20 @@ static int callback_get_comments_by_id(const struct _u_request *request, struct 
     }
 
     int i_param = atoi(record_id);
+    json_t *json_body = json_object();
+
     entry_t *entry = store_get_by_id(store, i_param);
     if (entry == NULL) {
+        json_object_set_new(json_body, NULL, NULL);
+        ulfius_set_json_body_response(response, HTTP_STATUS_OK, json_body);
+        json_decref(json_body);
+        log_json("info", "record not found");
         char lm[150];
-        sprintf(lm, "completed %s request in %dms", COMMENTS_PATH, time_spent(start));
+        sprintf(lm, "completed GET %s request in %dms", COMMENTS_BY_ID_PATH, time_spent(start));
         log_json("info", lm);
         return 1;
     }
-
-    json_t *json_body = json_object();
+    
     json_object_set_new(json_body, JSON_FIELD_ID, json_integer(entry->id)); 
     json_object_set_new(json_body, JSON_FIELD_NAME, json_string(entry->name));
     json_object_set_new(json_body, JSON_FIELD_EMAIL, json_string(entry->email));
@@ -105,7 +110,33 @@ static int callback_get_comments_by_id(const struct _u_request *request, struct 
     store_free_entry(entry);
 
     char lm[100];
-    sprintf(lm, "completed %s request in %dms", COMMENTS_BY_ID_PATH, time_spent(start));
+    sprintf(lm, "completed GET %s request in %dms", COMMENTS_BY_ID_PATH, time_spent(start));
+    log_json("info", lm);
+
+    return U_CALLBACK_CONTINUE;
+}
+
+/**
+ * callback_delete_comments_by_id retrieves a record from the data
+ * store and returns it.
+ */
+static int callback_delete_comments_by_id(const struct _u_request *request, struct _u_response *response, void *user_data) {
+    clock_t start = clock();
+
+    const char *record_id = u_map_get(request->map_url, "record_id");
+    if (record_id == NULL) {
+        char lm[100];
+        sprintf(lm, "null input for %s. DELETE request in %dms", COMMENTS_BY_ID_PATH, time_spent(start));
+        log_json("error", lm);
+        return 1;
+    }
+
+    int i_param = atoi(record_id);
+
+    store_update_entry(store, i_param);
+
+    char lm[100];
+    sprintf(lm, "completed DELETE %s request in %dms", COMMENTS_BY_ID_PATH, time_spent(start));
     log_json("info", lm);
 
     return U_CALLBACK_CONTINUE;
@@ -123,6 +154,7 @@ int callback_default(const struct _u_request *request, struct _u_response *respo
 int api_add_routes(struct _u_instance *instance) {
     ulfius_add_endpoint_by_val(instance, HTTP_METHOD_GET, "", COMMENTS_PATH, 0, &callback_get_all_comments, NULL);
     ulfius_add_endpoint_by_val(instance, HTTP_METHOD_GET, "", COMMENTS_BY_ID_PATH, 0, &callback_get_comments_by_id, NULL);
+    ulfius_add_endpoint_by_val(instance, HTTP_METHOD_DELETE, "", COMMENTS_BY_ID_PATH, 0, &callback_delete_comments_by_id, NULL);
 
     ulfius_set_default_endpoint(instance, &callback_default, NULL);
 }

@@ -88,6 +88,19 @@ entry_t *store_get_by_id(const store_t *store, const int id) {
     return NULL;
 }
 
+void store_update_entry(store_t *store, const int id) {
+    struct json_object *data_obj, *json_obj_id, *json_obj_name, *json_obj_email, *json_obj_body;
+
+    for (int i = 0; i < store->size; i++) {
+        data_obj = json_object_array_get_idx(store->data, i);
+        json_obj_id = json_object_object_get(data_obj, "id");
+        if (json_object_get_int(json_obj_id) == id) {
+            json_object_object_del(data_obj, "id");
+            return;
+        }
+    }
+}
+
 char **store_get_by_name(const store_t *store, const char *name) {
     return NULL;
 }

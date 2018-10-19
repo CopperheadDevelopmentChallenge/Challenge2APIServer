@@ -75,4 +75,10 @@ char **store_get_by_name(const store_t *store, const char *name);
  */
 char **store_get_by_email(const store_t *store, const char *name);
 
+/**
+ * store_update_entry receives a new entry and updates the 
+ * existing entry with the new one
+ */
+void store_update_entry(store_t *store, const int id);
+
 #endif /* _STORE_H */

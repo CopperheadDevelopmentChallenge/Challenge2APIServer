@@ -9,7 +9,7 @@ fi
 
 echo "Running container id: "${CONTAINER_ID}
 
-echo "Running /comments test..."
+echo "Running /comments GET test..."
 TEST_URL="${BASE_URL}/comments" 
 curl --silent -XGET ${TEST_URL} >> /dev/null
 if [ $? != 0 ]; then 
@@ -20,7 +20,18 @@ fi
 
 docker ps
 
-echo "Running /comments/{id} test..."
+echo "Running /comments/{id} GET test..."
+for i in $(seq 1 100); do 
+    TEST_URL="${BASE_URL}/comments/${i}" 
+    curl --silent -XGET ${TEST_URL} >> /dev/null
+    if [ $? != 0 ]; then 
+        echo Testing - ${TEST_URL} [FAILED] 
+    else
+        echo Testing - ${TEST_URL} [OK]
+    fi
+done
+
+echo "Running /comments/{id} DELETE test..."
 for i in $(seq 1 100); do 
     TEST_URL="${BASE_URL}/comments/${i}" 
     curl --silent -XGET ${TEST_URL} >> /dev/null
