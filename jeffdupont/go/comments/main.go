@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/signal"
+	"time"
 
 	"github.com/gorilla/mux"
 
@@ -23,6 +26,7 @@ func init() {
 }
 
 type Handler struct {
+	Log   log.Interface
 	Store *Store
 }
 
@@ -39,10 +43,11 @@ func (h *Handler) BuildDataStore(dataFile string) {
 		}
 		defer file.Close()
 
-		store := &Store{}
-		if err = json.Unmarshal(b, store); err != nil {
+		comments := []*Comment{}
+		if err = json.Unmarshal(b, &comments); err != nil {
 			log.Error(err.Error())
 		}
+		store := &Store{Comments: comments}
 		store.SetDataFile(dataFile)
 
 		h.Store = store
@@ -50,12 +55,16 @@ func (h *Handler) BuildDataStore(dataFile string) {
 }
 
 func main() {
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+
 	flag.Parse()
 
 	log.SetHandler(text.New(os.Stdout))
 
-	h := Handler{}
+	h := Handler{Log: log.Log}
 	h.BuildDataStore(dataFile)
+	defer h.Store.Close()
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", h.rootHandler)
@@ -65,22 +74,49 @@ func main() {
 	r.HandleFunc("/comments/{id}", h.updateComment).Methods("PUT")
 	r.HandleFunc("/comments/{id}", h.deleteComment).Methods("DELETE")
 
-	log.WithFields(log.Fields{
-		"port":          port,
-		"comment_count": len(h.Store.Comments),
-	}).Info(fmt.Sprintf("starting server at %s", port))
-	if err := http.ListenAndServe(":"+port, r); err != nil {
-		log.Error(err.Error())
-	}
+	s := &http.Server{Addr: ":" + port, Handler: r}
+	go func() {
+		log.WithFields(log.Fields{
+			"port":          port,
+			"comment_count": len(h.Store.Comments),
+		}).Info(fmt.Sprintf("starting server at %s", port))
+		if err := s.ListenAndServe(); err != nil {
+			log.Error(err.Error())
+		}
+	}()
+
+	<-stop
+
+	log.Info("Shutting down the server...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	s.Shutdown(ctx)
+	log.Info("Server gracefully stopped")
 }
 
 func (h Handler) getComments(w http.ResponseWriter, r *http.Request) {
 	// ?size=10&from=1
 }
 
-func (h Handler) createComment(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) createComment(w http.ResponseWriter, r *http.Request) {
 	log.Info("create comment")
+	comment := &Comment{}
+	err := json.NewDecoder(r.Body).Decode(comment)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	defer r.Body.Close()
+
+	comment = h.Store.Create(comment)
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(comment)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h Handler) getComment(w http.ResponseWriter, r *http.Request) {
