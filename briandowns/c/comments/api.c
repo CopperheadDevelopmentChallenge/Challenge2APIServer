@@ -135,6 +135,8 @@ static int callback_delete_comments_by_id(const struct _u_request *request, stru
 
     store_update_entry(store, i_param);
 
+    ulfius_set_empty_body_response(response, HTTP_STATUS_ACCEPTED);
+
     char lm[100];
     sprintf(lm, "completed DELETE %s request in %dms", COMMENTS_BY_ID_PATH, time_spent(start));
     log_json("info", lm);
