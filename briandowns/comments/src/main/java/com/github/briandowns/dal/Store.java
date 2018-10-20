@@ -2,17 +2,26 @@ package com.github.briandowns.dal;
 
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
+
 public class Store {
 
+    @SerializedName("data")
     private List<Comment> data;
-    private Integer lastIdx;
 
-    public List<Comment> getComments() {
-        return null;
+    public List<Comment> getData() {
+        return data;
     }
 
-    private Comment getComment(Integer id) {
-        return null;
+    public void setData(List<Comment> data) {
+        this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return "Store{" +
+                ", data=" + data +
+                '}';
+    }
 }
