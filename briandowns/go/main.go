@@ -51,39 +51,6 @@ func (s *store) commentByID(id int) *comment {
 	return nil
 }
 
-func (s *store) commentByName(name string) *comment {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for _, i := range s.Data {
-		if i.Name == name {
-			return i
-		}
-	}
-	return nil
-}
-
-func (s *store) commentByEmail(email string) *comment {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for _, i := range s.Data {
-		if i.Email == email {
-			return i
-		}
-	}
-	return nil
-}
-
-func (s *store) commentByBody(body string) *comment {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	for _, i := range s.Data {
-		if i.Body == body {
-			return i
-		}
-	}
-	return nil
-}
-
 func (s *store) deleteComment(id int) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
