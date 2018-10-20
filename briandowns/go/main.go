@@ -218,11 +218,11 @@ func (a *api) updateComment(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	ok := a.ds.updateComment(cid, &c)
 	if !ok {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusAccepted)
 	if err := json.NewEncoder(w).Encode(&c); err != nil {
 		log.Println(err)
 		return
@@ -240,12 +240,12 @@ func (a *api) deleteComment(w http.ResponseWriter, r *http.Request) {
 	}
 	c := a.ds.commentByID(cid)
 	if c == nil {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 	n := *c
 	if ok := a.ds.deleteComment(cid); !ok {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusAccepted)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -277,7 +277,7 @@ const commentsPath = "/comments"
 const commentsByIDPath = commentsPath + "/{id}"
 
 func main() {
-	ds, err := newStore("../data.json")
+	ds, err := newStore("../../data.json")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
