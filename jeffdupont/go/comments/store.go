@@ -13,6 +13,10 @@ type Store struct {
 	Comments []*Comment `json:"data"`
 }
 
+func (s Store) Filename() string {
+	return s.file
+}
+
 func (s *Store) SetDataFile(file string) {
 	s.mu = &sync.Mutex{}
 	s.file = file
@@ -30,20 +34,20 @@ func (s Store) FindByID(id int) *Comment {
 func (s *Store) Create(c *Comment) *Comment {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	c.ID = len(s.Comments) + 1
+	c.ID = s.Comments[len(s.Comments)-1].ID + 1
 	s.Comments = append(s.Comments, c)
+	fmt.Println(len(s.Comments))
 	return c
 }
 
-func (s Store) Close() {
-	fmt.Println("closing datastore and writing to file ", s.file)
-	defer fmt.Println("datastore closed successfully")
+func (s Store) Close() error {
 	b, err := json.Marshal(s.Comments)
 	if err != nil {
-		fmt.Errorf("could not marshal the comments: %v\n", err)
+		return err
 	}
 	err = ioutil.WriteFile(s.file, b, 0644)
 	if err != nil {
-		fmt.Errorf("could not write to file %s: %v\n", s.file, err)
+		return err
 	}
+	return nil
 }
