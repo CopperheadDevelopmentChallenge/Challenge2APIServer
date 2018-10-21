@@ -102,12 +102,11 @@ type api struct {
 }
 
 func (a *api) allComments(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
 	w.Header().Set("Content-Type", "application/json")
 	switch {
-	case len(params) > 0:
-		s := params.Get("size")
-		f := params.Get("from")
+	case len(r.URL.Query()) > 0:
+		s := r.URL.Query().Get("size")
+		f := r.URL.Query().Get("from")
 		if s == "" || f == "" {
 			break
 		}
@@ -240,9 +239,6 @@ func (a *api) addComment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-const commentsPath = "/comments"
-const commentsByIDPath = commentsPath + "/{id}"
-
 func main() {
 	ds, err := newStore("../../data.json")
 	if err != nil {
@@ -251,11 +247,11 @@ func main() {
 	}
 	a := api{ds}
 	r := mux.NewRouter()
-	r.HandleFunc(commentsPath, a.allComments).Methods(http.MethodGet)
-	r.HandleFunc(commentsPath, a.addComment).Methods(http.MethodPost)
-	r.HandleFunc(commentsByIDPath, a.comment).Methods(http.MethodGet)
-	r.HandleFunc(commentsByIDPath, a.updateComment).Methods(http.MethodPut)
-	r.HandleFunc(commentsByIDPath, a.deleteComment).Methods(http.MethodDelete)
+	r.HandleFunc("/comments", a.allComments).Methods(http.MethodGet)
+	r.HandleFunc("/comments", a.addComment).Methods(http.MethodPost)
+	r.HandleFunc("/comments/{id}", a.comment).Methods(http.MethodGet)
+	r.HandleFunc("/comments/{id}", a.updateComment).Methods(http.MethodPut)
+	r.HandleFunc("/comments/{id}", a.deleteComment).Methods(http.MethodDelete)
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

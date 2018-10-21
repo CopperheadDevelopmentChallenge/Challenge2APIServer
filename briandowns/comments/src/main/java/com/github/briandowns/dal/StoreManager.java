@@ -27,14 +27,22 @@ public class StoreManager {
     }
 
     public List<Comment> getComments() {
+        return this.store.getData();
+    }
+
+    public List<Comment> getComments(Integer size, Integer from) {
         return null;
     }
 
     public Comment getComment(Integer id) {
-        return null;
+        Comment comment = null;
+        return this.store.getData().stream()
+                .filter(c -> c.getId()
+                .equals(id)).findFirst()
+                .orElse(comment);
     }
 
-    public Comment updateComment(Integer id) {
+    public Comment updateComment(Integer id, Comment comment) {
         return null;
     }
 

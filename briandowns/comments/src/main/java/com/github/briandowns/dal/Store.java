@@ -1,5 +1,6 @@
 package com.github.briandowns.dal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class Store {
 
     @SerializedName("data")
-    private List<Comment> data;
+    private List<Comment> data = new ArrayList<>();
 
     public List<Comment> getData() {
         return data;
