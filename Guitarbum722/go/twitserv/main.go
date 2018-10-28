@@ -1,9 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -91,18 +91,19 @@ func commentHandler(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusAccepted)
 			w.Write(comment)
 		case http.MethodPut:
-			toUpdate, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
+			var c comment
+			if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
+				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
-			comment, err := db.updateComment(commentID, toUpdate)
+
+			new, err := db.updateComment(commentID, c)
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 				return
 			}
 			w.WriteHeader(http.StatusAccepted)
-			w.Write(comment)
+			w.Write(new)
 		}
 	}
 }
@@ -125,19 +126,19 @@ func allCommentsHandler(w http.ResponseWriter, r *http.Request) {
 		w.Write(data)
 		return
 	case http.MethodPost:
-		toInsert, err := ioutil.ReadAll(r.Body)
-		if err != nil {
+		var c comment
+		if err := json.NewDecoder(r.Body).Decode(&c); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
-		comment, err := db.insert(toInsert)
+		new, err := db.insert(c)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		w.Write(comment)
+		w.Write(new)
 	}
 }
 

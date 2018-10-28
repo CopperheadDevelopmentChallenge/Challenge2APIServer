@@ -83,12 +83,7 @@ func (d *database) remove(commentID int) {
 	delete(d.index, commentID)
 }
 
-func (d *database) insert(toInsert []byte) ([]byte, error) {
-	var c comment
-	if err := json.Unmarshal(toInsert, &c); err != nil {
-		return nil, errInvalidInput
-	}
-
+func (d *database) insert(c comment) ([]byte, error) {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
@@ -114,12 +109,8 @@ func (d *database) commentByID(commentID int) ([]byte, error) {
 	return nil, errCommentNotFound
 }
 
-func (d *database) updateComment(commentID int, toUpdate []byte) ([]byte, error) {
-	var c comment
-	if err := json.Unmarshal(toUpdate, &c); err != nil {
-		return nil, errInvalidInput
-	}
-	// use a common field validator (for insert as well)
+func (d *database) updateComment(commentID int, c comment) ([]byte, error) {
+
 	// reset the ID if not in the payload (but in the URL variable)
 	if c.ID == 0 {
 		c.ID = commentID
