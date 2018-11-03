@@ -62,6 +62,7 @@ func main() {
 	flag.Parse()
 
 	log.SetHandler(text.New(os.Stdout))
+	log.SetLevel(log.DebugLevel)
 
 	h := Handler{Log: log.Log}
 	h.BuildDataStore(dataFile)
@@ -100,7 +101,7 @@ func (h Handler) Close() {
 	h.Log.WithFields(log.Fields{
 		"filename":      h.Store.Filename(),
 		"comment_count": len(h.Store.Comments),
-	}).Infof("closing datastore")
+	}).Info("closing datastore")
 	err := h.Store.Close()
 	if err != nil {
 
@@ -110,18 +111,15 @@ func (h Handler) Close() {
 }
 
 func (h Handler) getComments(w http.ResponseWriter, r *http.Request) {
-	// ?size=10&from=1
+	log.Debug("get comments")
 	q := r.URL.Query()
-	var page int
+	var pageSize int
 	var err error
 	if size, ok := q["size"]; ok {
-		page, err = strconv.Atoi(size[0])
+		pageSize, err = strconv.Atoi(size[0])
 		if err != nil {
 			h.Log.Error(err.Error())
 		}
-	}
-	if page == 0 {
-		page = 10
 	}
 	var offset int
 	if from, ok := q["from"]; ok {
@@ -130,7 +128,7 @@ func (h Handler) getComments(w http.ResponseWriter, r *http.Request) {
 			h.Log.Error(err.Error())
 		}
 	}
-	comments := h.Store.Comments[offset:page]
+	comments := h.Store.Find(offset, pageSize)
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(comments)
 	if err != nil {
@@ -140,7 +138,7 @@ func (h Handler) getComments(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) createComment(w http.ResponseWriter, r *http.Request) {
-	log.Info("create comment")
+	log.Debug("create comment")
 	comment := &Comment{}
 	err := json.NewDecoder(r.Body).Decode(comment)
 	if err != nil {
@@ -150,6 +148,7 @@ func (h *Handler) createComment(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	comment = h.Store.Create(comment)
+	log.WithField("comment_id", comment.ID).Info("comment created")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
@@ -161,19 +160,71 @@ func (h *Handler) createComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) getComment(w http.ResponseWriter, r *http.Request) {
+	log.Debug("get comment")
 	vars := mux.Vars(r)
-	id := vars["id"]
+	idParam := vars["id"]
+	if len(idParam) == 0 || idParam == "0" {
+		h.Log.Error("missing comment id")
+		http.Error(w, "missing comment id", http.StatusNotFound)
+	}
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 	log.WithField("comment_id", id).Info("get comment")
+
+	comment := h.Store.FindByID(id)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(comment)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h Handler) updateComment(w http.ResponseWriter, r *http.Request) {
+	log.Debug("update comment")
 	vars := mux.Vars(r)
-	id := vars["id"]
-	log.WithField("comment_id", id).Info("update comment")
+	idParam := vars["id"]
+	if len(idParam) == 0 || idParam == "0" {
+		h.Log.Error("missing comment id")
+		http.Error(w, "missing comment id", http.StatusNotFound)
+	}
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	comment := &Comment{}
+	err = json.NewDecoder(r.Body).Decode(comment)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	defer r.Body.Close()
+
+	comment = h.Store.Update(id, comment)
+
+	log.WithFields(log.Fields{
+		"comment_id": id,
+		"comment":    comment,
+	}).Info("update comment")
+
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
+	err = json.NewEncoder(w).Encode(comment)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h Handler) deleteComment(w http.ResponseWriter, r *http.Request) {
+	log.Debug("delete comment")
 	vars := mux.Vars(r)
 	id := vars["id"]
 	log.WithField("comment_id", id).Info("delete comment")
@@ -181,7 +232,7 @@ func (h Handler) deleteComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h Handler) rootHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("root handler")
+	log.Debug("root handler")
 	w.Header().Add("Content-type", "application/json")
 	w.Write([]byte("{\"version\":\"0.1\",\"name\":\"API Challenge\",\"comment_count\":" + fmt.Sprintf("%d", len(h.Store.Comments)) + "}"))
 }
