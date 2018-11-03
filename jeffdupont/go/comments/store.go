@@ -56,8 +56,8 @@ func (s *Store) Update(id int, c *Comment) *Comment {
 }
 
 func (s *Store) Save(c *Comment) *Comment {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	for _, comment := range s.Comments {
 		if c.ID == comment.ID {
 			comment.Body = c.Body
@@ -67,6 +67,17 @@ func (s *Store) Save(c *Comment) *Comment {
 		}
 	}
 	return nil
+}
+
+func (s *Store) Delete(id int) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for idx, comment := range s.Comments {
+		if id == comment.ID {
+			s.Comments = append(s.Comments[:idx], s.Comments[idx+1:]...)
+			break
+		}
+	}
 }
 
 func (s Store) Close() error {

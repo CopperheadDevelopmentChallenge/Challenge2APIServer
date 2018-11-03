@@ -102,9 +102,10 @@ func (h Handler) Close() {
 		"filename":      h.Store.Filename(),
 		"comment_count": len(h.Store.Comments),
 	}).Info("closing datastore")
+
 	err := h.Store.Close()
 	if err != nil {
-
+		h.Log.Error(err.Error())
 	} else {
 		h.Log.Info("datastore closed successfully")
 	}
@@ -128,7 +129,9 @@ func (h Handler) getComments(w http.ResponseWriter, r *http.Request) {
 			h.Log.Error(err.Error())
 		}
 	}
+
 	comments := h.Store.Find(offset, pageSize)
+
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(comments)
 	if err != nil {
@@ -212,7 +215,7 @@ func (h Handler) updateComment(w http.ResponseWriter, r *http.Request) {
 	log.WithFields(log.Fields{
 		"comment_id": id,
 		"comment":    comment,
-	}).Info("update comment")
+	}).Info("comment updated")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusAccepted)
@@ -226,8 +229,20 @@ func (h Handler) updateComment(w http.ResponseWriter, r *http.Request) {
 func (h Handler) deleteComment(w http.ResponseWriter, r *http.Request) {
 	log.Debug("delete comment")
 	vars := mux.Vars(r)
-	id := vars["id"]
-	log.WithField("comment_id", id).Info("delete comment")
+	idParam := vars["id"]
+	if len(idParam) == 0 || idParam == "0" {
+		h.Log.Error("missing comment id")
+		http.Error(w, "missing comment id", http.StatusNotFound)
+	}
+	id, err := strconv.Atoi(idParam)
+	if err != nil {
+		h.Log.Error(err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	h.Store.Delete(id)
+
+	log.WithField("comment_id", id).Info("comment deleted")
 	w.WriteHeader(http.StatusAccepted)
 }
 
